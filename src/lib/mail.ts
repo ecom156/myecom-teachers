@@ -34,19 +34,28 @@ export async function verifyTurnstile(token: string, ip: string) {
 export type Attachment = { filename: string; content: string };
 
 export async function sendMail(mail: { to: string[]; subject: string; text: string; replyTo?: string; attachments?: Attachment[] }) {
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${vars.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      from: FROM,
-      to: mail.to,
-      reply_to: mail.replyTo,
-      subject: mail.subject,
-      text: mail.text,
-      attachments: mail.attachments,
-    }),
+  const body = JSON.stringify({
+    from: FROM,
+    to: mail.to,
+    reply_to: mail.replyTo,
+    subject: mail.subject,
+    text: mail.text,
+    attachments: mail.attachments,
   });
-  if (!res.ok) throw new Error(`resend ${res.status}: ${await res.text()}`);
+  // Resend は 1 秒あたりの送信数に上限があり、続けて送ると 429 が返るので少し待って送り直す
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${vars.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
+      body,
+    });
+    if (res.ok) return;
+    if (res.status === 429 && attempt < 3) {
+      await new Promise((r) => setTimeout(r, 1100 * (attempt + 1)));
+      continue;
+    }
+    throw new Error(`resend ${res.status}: ${await res.text()}`);
+  }
 }
 
 export async function toBase64(file: File) {
