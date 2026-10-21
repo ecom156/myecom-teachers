@@ -15,6 +15,37 @@ const isHome = page.data.path === '';
 const [before, after = ''] = (page.rendered?.html ?? '').split('<!-- form -->');
 ---
 <Base title={isHome ? "Online Language Teacher's job positions in ECOM" : page.data.title} description={page.data.description}>
+  {isHome && (
+    <>
+      <section class="hero">
+        <img src="/teachers/wp-content/uploads/2013/11/phare.jpg" alt="" width="1200" height="500" />
+        <div class="hero-text">
+          <p class="hero-title">Want to be in the top 0.1% of language teachers?</p>
+          <p>We are seeking only the best, highly skilled and motivated teachers to join our team.</p>
+          <a class="btn" href="/teachers/careers/">Learn more</a>
+        </div>
+      </section>
+      <div class="wrap">
+        <div class="features">
+          <a class="feature" href="/teachers/careers/online_english_teacher/">
+            <img src="/teachers/wp-content/uploads/2023/10/Online-teachers-culture-small0-270x250.jpg" alt="" width="270" height="250" loading="lazy" />
+            <div>
+              <h2>Online English Teacher (home-based)</h2>
+              <p>23-26 USD / hour. Welcome English and Japanese bilingual speakers.</p>
+              <span class="more">Read more »</span>
+            </div>
+          </a>
+          <div class="feature">
+            <img src="/teachers/wp-content/uploads/2014/09/takako_small-e1410254045902.jpg" alt="" width="754" height="262" loading="lazy" />
+            <div>
+              <h2>Superior Support</h2>
+              <p>You can focus on your lessons knowing we have your back if any trouble arises.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  )}
   <div class="wrap">
     {!isHome && <nav class="breadcrumb"><a href="/teachers/">Home</a> » {page.data.title}</nav>}
     <h1>{page.data.title}</h1>
