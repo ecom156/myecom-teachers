@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ApplyForm from '../../components/ApplyForm.astro';
+import ContactForm from '../../components/ContactForm.astro';
+
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  return pages.map((page) => ({ params: { path: page.data.path || undefined }, props: { page } }));
+}
+
+const { page } = Astro.props;
+const isHome = page.data.path === '';
+// 本文の <!-- form --> の位置にフォームを差し込む
+const [before, after = ''] = (page.rendered?.html ?? '').split('<!-- form -->');
+---
+<Base title={isHome ? "Online Language Teacher's job positions in ECOM" : page.data.title} description={page.data.description}>
+  <div class="wrap">
+    {!isHome && <nav class="breadcrumb"><a href="/teachers/">Home</a> » {page.data.title}</nav>}
+    <h1>{page.data.title}</h1>
+    <div class="prose">
+      <Fragment set:html={before} />
+      {page.data.form === 'apply' && <ApplyForm />}
+      {page.data.form === 'contact' && <ContactForm />}
+      <Fragment set:html={after} />
+    </div>
+    {isHome && <p class="cta"><a class="btn" href="/teachers/form/">Apply now</a> <a class="btn btn-sub" href="/teachers/careers/">See open positions</a></p>}
+  </div>
+  {page.data.form && (
+    <script is:inline>
+      // 送信に失敗したときは ?error=<コード> で戻ってくるので、対応するメッセージを出す
+      const code = new URLSearchParams(location.search).get('error');
+      if (code) {
+        const el = document.querySelector(`.form-error[data-code="${code}"]`) || document.querySelector('.form-error[data-code="*"]');
+        el.hidden = false;
+        el.scrollIntoView({ block: 'center' });
+      }
+    </script>
+  )}
+</Base>

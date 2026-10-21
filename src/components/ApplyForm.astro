@@ -1,0 +1,64 @@
+---
+import { FILE_TYPES, MAX_FILE } from '../lib/limits';
+import { TURNSTILE_SITE_KEY } from './turnstile';
+---
+<p class="form-error" hidden data-code="v">Please fill in all required fields.</p>
+<p class="form-error" hidden data-code="f">The file must be a document (PDF, Word, etc.) of {MAX_FILE / 1024 / 1024} MB or less.</p>
+<p class="form-error" hidden data-code="*">Sorry, we could not send your application. Please try again later, or email us at rec@ecominc.co.jp.</p>
+<form class="form" id="apply" method="post" action="/teachers/api/apply/" enctype="multipart/form-data">
+  <fieldset>
+    <legend>Name<span class="req">*</span></legend>
+    <div class="row">
+      <label><span>First name</span><input name="first_name" required maxlength="100" autocomplete="given-name" /></label>
+      <label><span>Last name</span><input name="last_name" required maxlength="100" autocomplete="family-name" /></label>
+    </div>
+  </fieldset>
+  <label><span>Email<span class="req">*</span></span><input name="email" type="email" required maxlength="200" autocomplete="email" /></label>
+  <label><span>Nationality<span class="req">*</span></span><input name="nationality" required maxlength="100" /></label>
+  <label><span>Place of residence now<span class="req">*</span></span><input name="residence" required maxlength="200" /></label>
+  <label><span>Cover page</span><textarea name="cover" rows="6" maxlength="5000"></textarea></label>
+  <fieldset>
+    <legend>Please choose one of the following options<span class="req">*</span></legend>
+    <label class="inline"><input type="radio" name="method" value="online" checked /> Fill out the form online</label>
+    <label class="inline"><input type="radio" name="method" value="upload" /> Upload your resume file</label>
+  </fieldset>
+  <div class="online">
+    <label><span>Business experiences<span class="req">*</span></span><textarea name="business" rows="6" maxlength="5000" required></textarea></label>
+    <label><span>Education history<span class="req">*</span></span><textarea name="education" rows="6" maxlength="5000" required></textarea></label>
+    <label><span>Language skills</span><textarea name="languages" rows="4" maxlength="3000"></textarea></label>
+    <label><span>Others</span><textarea name="others" rows="4" maxlength="5000"></textarea></label>
+  </div>
+  <div class="upload" hidden>
+    <label><span>Resume file<span class="req">*</span></span>
+      <input name="resume" type="file" accept={FILE_TYPES.join(',')} />
+      <span class="note">PDF or Word, up to {MAX_FILE / 1024 / 1024} MB.</span>
+    </label>
+  </div>
+  <label class="inline"><input type="checkbox" name="agree" value="1" required /> <span>I understand that Ecom will contact only applicants who pass the initial screening process<span class="req">*</span></span></label>
+  <input name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <div class="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-language="en"></div>
+  <button class="btn" type="submit">Submit</button>
+</form>
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script define:vars={{ maxFile: MAX_FILE }}>
+  const f = document.getElementById('apply');
+  const online = f.querySelector('.online');
+  const upload = f.querySelector('.upload');
+  const resume = f.querySelector('[name=resume]');
+  // 「オンライン記入」と「履歴書アップロード」で表示する欄と必須項目を切り替える
+  const sync = () => {
+    const isUpload = f.querySelector('[name=method]:checked').value === 'upload';
+    online.hidden = isUpload;
+    upload.hidden = !isUpload;
+    f.querySelector('[name=business]').required = !isUpload;
+    f.querySelector('[name=education]').required = !isUpload;
+    resume.required = isUpload;
+  };
+  f.querySelectorAll('[name=method]').forEach((r) => r.addEventListener('change', sync));
+  sync();
+  resume.addEventListener('change', () => {
+    const file = resume.files[0];
+    resume.setCustomValidity(file && file.size > maxFile ? 'The file must be 10 MB or less.' : '');
+  });
+  f.addEventListener('submit', () => { f.querySelector('button').disabled = true; });
+</script>

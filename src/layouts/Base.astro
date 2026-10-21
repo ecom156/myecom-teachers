@@ -1,0 +1,77 @@
+---
+import '../styles/global.css';
+import { nav } from '../components/Nav';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const SITE = "Online Language Teacher's job positions in ECOM";
+const {
+  title,
+  description = 'ECOM is hiring online language teachers. We aim to gather the top 0.1% of the world’s language teachers.',
+} = Astro.props;
+const fullTitle = title === SITE ? SITE : `${title} | ${SITE}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const current = Astro.url.pathname;
+const year = new Date().getFullYear();
+const logo = '/teachers/wp-content/uploads/2024/08/cropped-ECOM250-100.png';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/teachers/wp-content/uploads/2024/08/cropped-ecom_C-32x32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/teachers/wp-content/uploads/2024/08/cropped-ecom_C-180x180.png" />
+    <link rel="sitemap" href="/teachers/sitemap.xml" />
+    <meta property="og:site_name" content={SITE} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(logo, Astro.site)} />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GT-NBBPHZQ8"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GT-NBBPHZQ8');
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="logo" href="/teachers/"><img src={logo} alt="ECOM" width="250" height="100" /></a>
+        <details class="menu-toggle"><summary>Menu</summary></details>
+        <ul class="nav">
+          {nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={current === item.href ? 'page' : undefined}>{item.label}</a>
+              {item.children && (
+                <ul class="sub">
+                  {item.children.map((c) => <li><a href={c.href}>{c.label}</a></li>)}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <ul>
+          {nav.filter((i) => i.href !== '/teachers/').map((i) => <li><a href={i.href}>{i.label}</a></li>)}
+          <li><a href="mailto:rec@ecominc.co.jp">rec@ecominc.co.jp</a></li>
+        </ul>
+        <div>© 2015-{year} <a href="https://ecominc.co.jp/">Ecommunication, Inc.</a></div>
+      </div>
+    </footer>
+  </body>
+</html>
