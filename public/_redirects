@@ -1,0 +1,18 @@
+# 仮 URL（workers.dev）のトップ。本番では /teachers* 以外はこの Worker に来ない
+/ /teachers/ 302
+# 移行しなかったブログ
+/teachers/blog /teachers/ 301
+/teachers/blog/* /teachers/ 301
+/teachers/category/* /teachers/ 301
+/teachers/author/* /teachers/ 301
+/teachers/tag/* /teachers/ 301
+# 廃止したページ
+/teachers/apply-school-teachers/ /teachers/form/ 301
+/teachers/teachers/ /teachers/ 301
+/teachers/school_introduction/professional-teachers/* /teachers/school_introduction/ 301
+# WordPress 固有の URL
+/teachers/feed/* /teachers/ 301
+/teachers/feed /teachers/ 301
+/teachers/comments/feed/ /teachers/ 301
+/teachers/wp-login.php /teachers/ 301
+/teachers/wp-admin/* /teachers/ 301

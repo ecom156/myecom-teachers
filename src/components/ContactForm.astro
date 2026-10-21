@@ -1,0 +1,16 @@
+---
+import { TURNSTILE_SITE_KEY } from './turnstile';
+---
+<h2 id="contact">Contact form</h2>
+<p class="form-error" hidden data-code="v">Please fill in all required fields.</p>
+<p class="form-error" hidden data-code="*">Sorry, we could not send your message. Please try again later, or email us at rec@ecominc.co.jp.</p>
+<form class="form" method="post" action="/teachers/api/contact/">
+  <label><span>Name<span class="req">*</span></span><input name="name" required maxlength="100" autocomplete="name" /></label>
+  <label><span>Corporate name</span><input name="company" maxlength="200" autocomplete="organization" /></label>
+  <label><span>Email<span class="req">*</span></span><input name="email" type="email" required maxlength="200" autocomplete="email" /></label>
+  <label><span>Message<span class="req">*</span></span><textarea name="message" required rows="8" maxlength="5000"></textarea></label>
+  <input name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+  <div class="cf-turnstile" data-sitekey={TURNSTILE_SITE_KEY} data-language="en"></div>
+  <button class="btn" type="submit">Send</button>
+</form>
+<script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
