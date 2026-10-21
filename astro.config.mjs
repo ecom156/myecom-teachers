@@ -8,5 +8,7 @@ export default defineConfig({
   site: 'https://www.myecom.net',
   // フォームの POST がスラッシュ付きへの転送で壊れないよう ignore にする
   trailingSlash: 'ignore',
+  // CSS や JS も /teachers/ 配下に出す（/_astro/ だと Worker ルートの外になり、さくら側の 404 になる）
+  build: { assets: 'teachers/_astro' },
   adapter: cloudflare(),
 });
